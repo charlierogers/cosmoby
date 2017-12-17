@@ -48,28 +48,14 @@ public class Turkey {
 
     public Turkey(int width, int height) {
         dim = new Dim(width, height, 1000, 700);
-        //get turkey image
-        ImageIcon i3 = new ImageIcon(turkeyEFile);
-        ImageIcon i4 = new ImageIcon(turkeyWFile);
-        ImageIcon i5 = new ImageIcon(turkeyEinvFile);
-        ImageIcon i6 = new ImageIcon(turkeyWinvFile);
-        //make the image's background transparent
-        ImageConverter ic = new ImageConverter();
-        ImageTransparency it = new ImageTransparency();
-        BufferedImage bi3 = ic.imageToBufferedImage(i3.getImage());
-        turkeyE = it.makeColorTransparent(bi3, Color.white);
+        //get turkey image in all orientations
+        turkeyE = new ImageIcon(turkeyEFile).getImage();
         turkeyImage = turkeyW;
-        BufferedImage bi4 = ic.imageToBufferedImage(i4.getImage());
-        turkeyW = it.makeColorTransparent(bi4, Color.white);
-        BufferedImage bi5 = ic.imageToBufferedImage(i5.getImage());
-        turkeyEinv = it.makeColorTransparent(bi5, Color.white);
-        BufferedImage bi6 = ic.imageToBufferedImage(i6.getImage());
-        turkeyWinv = it.makeColorTransparent(bi6, Color.white);
+        turkeyW = new ImageIcon(turkeyWFile).getImage();
+        turkeyEinv = new ImageIcon(turkeyEinvFile).getImage();
+        turkeyWinv = new ImageIcon(turkeyWinvFile).getImage();
         //get cooked turkey image
-        ImageIcon ii = new ImageIcon(cookedTkyFile);
-        //make the image's background transparent
-        BufferedImage biCooked = ic.imageToBufferedImage(ii.getImage());
-        cookedTky = it.makeColorTransparent(biCooked, Color.white);
+        cookedTky = new ImageIcon(cookedTkyFile).getImage();
         turkeyWidth = turkeyW.getWidth(null);
         turkeyHeight = turkeyW.getHeight(null);
         putInStartPos();

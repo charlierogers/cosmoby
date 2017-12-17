@@ -22,8 +22,6 @@ public class CosmoTurkeyv2_4_2 extends JFrame {
     private class Dimensioner {
         
         Dimension screenSize;
-        int width;
-        int height;
         double screenW;
         double screenH;
         

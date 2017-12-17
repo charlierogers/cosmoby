@@ -2,7 +2,6 @@ import image.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,14 +26,8 @@ public class Bush {
 
     public Bush(int winWidth, int winHeight) {
 //        dim = new Dim(winWidth, winHeight);
-        ImageIcon i = new ImageIcon(bushFile);
-        ImageIcon i2 = new ImageIcon(explosionFile);
-        ImageConverter ic = new ImageConverter();
-        ImageTransparency it = new ImageTransparency();
-        BufferedImage bi = ic.imageToBufferedImage(i.getImage());
-        bushImage = it.makeColorTransparent(bi, Color.white);
-        bi = ic.imageToBufferedImage(i2.getImage());
-        explosion = it.makeColorTransparent(bi, Color.white);
+        bushImage = new ImageIcon(bushFile).getImage();
+        explosion = new ImageIcon(explosionFile).getImage();
         image = bushImage;
         bushRangeY = winHeight - 175;
         bushRangeX = winWidth - 250;

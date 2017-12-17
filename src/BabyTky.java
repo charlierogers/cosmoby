@@ -15,11 +15,7 @@ public class BabyTky {
     public BabyTky (int x, int y) {
         this.x = x;
         this.y = y;
-        ImageIcon i = new ImageIcon(tkyImageFile);
-        ImageConverter ic = new ImageConverter();
-        ImageTransparency it = new ImageTransparency();
-        BufferedImage bi = ic.imageToBufferedImage(i.getImage());
-        babyTky = it.makeColorTransparent(bi, Color.white);
+        babyTky = new ImageIcon(tkyImageFile).getImage();
         visible = true;
     }
     

@@ -1,12 +1,10 @@
 import button.JGradientButton;
-import image.*;
 import nu.xom.*;
 import screen.Dim;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -79,7 +77,7 @@ public class Board extends JPanel implements ActionListener {
     public Board(int width, int height) {
         screenWidth = width;
         screenHeight = height;
-        boardColor = new Color(0, 238, 118);
+        boardColor = new Color(125, 203, 238);
         setSize(width, height);
         dim = new Dim(screenWidth, screenHeight, 1000, 700);
         reset();
@@ -181,7 +179,7 @@ public class Board extends JPanel implements ActionListener {
     private void setUpShot() {
         shot = new ArrayList();
         for (int i = 0; i < level + 4; i++) {
-            shot.add(new BlackCloud(getWidth(), getHeight() - statusBarHeight));
+            shot.add(new Harpoon(getWidth(), getHeight() - statusBarHeight));
         }
     }
 
@@ -280,16 +278,9 @@ public class Board extends JPanel implements ActionListener {
     }
     
     private void setUpImages() {
-        ImageConverter ic = new ImageConverter();
-        ImageTransparency it = new ImageTransparency();
-        ImageIcon i1 = new ImageIcon("images/farmercombo.JPG");
-        BufferedImage bi = ic.imageToBufferedImage(i1.getImage());
-        farmer = it.makeColorTransparent(bi, Color.white);
-        ImageIcon i2 = new ImageIcon("images/youwon4.GIF");
-        youWon = i2.getImage();
-        ImageIcon i3 = new ImageIcon("images/foodtrough.GIF");
-        bi = ic.imageToBufferedImage(i3.getImage());
-        foodTrough = it.makeColorTransparent(bi, Color.white);
+        farmer = new ImageIcon("images/farmercombo.JPG").getImage();
+        youWon = new ImageIcon("images/youwon4.GIF").getImage();
+        foodTrough = new ImageIcon("images/foodtrough.GIF").getImage();
     }
     
     @Override
@@ -381,7 +372,7 @@ public class Board extends JPanel implements ActionListener {
 
             //draw black cloud
             for (int i = 0; i < shot.size(); i++) {
-                BlackCloud bc = (BlackCloud) shot.get(i);
+                Harpoon bc = (Harpoon) shot.get(i);
                 g.drawImage(bc.getImage(), bc.getX(), bc.getY(), this);
             }
         } else {
@@ -453,7 +444,7 @@ public class Board extends JPanel implements ActionListener {
                 turkey.move(getWidth(), getHeight() - statusBarHeight);
             }
             for (int i = 0; i < shot.size(); i++) {
-                BlackCloud bc = (BlackCloud) shot.get(i);
+                Harpoon bc = (Harpoon) shot.get(i);
                 bc.move();
             }
 
@@ -486,7 +477,7 @@ public class Board extends JPanel implements ActionListener {
 
         //keep black clouds out of safe zone and food trough
         for (int i = 0; i < shot.size(); i++) {
-            BlackCloud bc = (BlackCloud) shot.get(i);
+            Harpoon bc = (Harpoon) shot.get(i);
             Rectangle bcRect = bc.makeRectangle();
             if ((bcRect.intersects(safeZone)) || (bcRect.intersects(foodTroughRect))) {
                 bc.putAtTop();
@@ -531,7 +522,7 @@ public class Board extends JPanel implements ActionListener {
         if (!underBush && !deadTky && !turkey.isInvincible()) {
             Loop:
             for (int i = 0; i < shot.size(); i++) {
-                BlackCloud bc = (BlackCloud) shot.get(i);
+                Harpoon bc = (Harpoon) shot.get(i);
                 if (bc.makeRectangle().intersects(turkeyRect)) {
                     isHit = true;
                     hitLastTime = true;

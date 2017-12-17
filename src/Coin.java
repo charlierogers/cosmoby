@@ -25,11 +25,7 @@ public class Coin {
     
     public Coin(String filename, int width, int height) {
         dim = new Dim(width, height, 1000, 700);
-        ImageIcon ii = new ImageIcon(filename);
-        ImageTransparency it = new ImageTransparency();
-        ImageConverter ic = new ImageConverter();
-        BufferedImage bi = ic.imageToBufferedImage(ii.getImage());
-        coinImage = it.makeColorTransparent(bi, Color.white);
+        coinImage = new ImageIcon(filename).getImage();
         getNewCoordinates();
         isVisible = false;
         isDead = false;
