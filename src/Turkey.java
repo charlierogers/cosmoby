@@ -1,10 +1,8 @@
-import image.*;
 import screen.Dim;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,31 +12,40 @@ public class Turkey {
     private double y;
     private double xChange;
     private double yChange;
-    private Image turkeyImage;
-    private Image turkeyE;
-    private Image turkeyW;
-    private Image turkeyWinv;
-    private Image turkeyEinv;
-    private boolean east;
-    private boolean west;
-    private Image cookedTky;
+    private double turkeyFPS;
+    private boolean facingEast;
+    private boolean visible;
+    private boolean hasFood;
+    private boolean isDead;
+    private boolean goingFast;
+    private boolean invincible;
     private String turkeyEFile = "images/turkey7east.GIF";
     private String turkeyWFile = "images/turkey7west.GIF";
     private String cookedTkyFile = "images/turkey5.GIF";
     private String turkeyEinvFile = "images/turkey7eastshield.GIF";
     private String turkeyWinvFile = "images/turkey7westshield.GIF";
-    private int turkeyWidth;
-    private int turkeyHeight;
-    private Toolkit tk;
-    private Dimension screen;
-    private double turkeyFPS;
-    private boolean visible;
+    private String turkeyEBigFile = "images/turkey7eastBig.GIF";
+    private String turkeyWBigFile = "images/turkey7westBig.GIF";
+    private String turkeyEInvBigFile = "images/turkey7eastshieldBig.GIF";
+    private String turkeyWInvBigFile = "images/turkey7westshieldBig.GIF";
+    private Image turkeyE;
+    private Image turkeyW;
+    private Image turkeyWInv;
+    private Image turkeyEInv;
+    private Image turkeyEReg;
+    private Image turkeyWReg;
+    private Image turkeyWInvReg;
+    private Image turkeyEInvReg;
+    private Image turkeyEBig;
+    private Image turkeyWBig;
+    private Image turkeyWInvBig;
+    private Image turkeyEInvBig;
+    private Image cookedTky;
+    private static final double HAS_FOOD_SCALE_FACTOR = 1.3;
     private Timer speedTimer;
     private SpeedTimerTask speedTimerTask;
     private Timer invincibilityTimer;
     private InvincibilityTimerTask invincibilityTimerTask;
-    private boolean goingFast;
-    private boolean invincible;
     Dim dim;
     //controls
     private boolean rightButton;
@@ -48,24 +55,23 @@ public class Turkey {
 
     public Turkey(int width, int height) {
         dim = new Dim(width, height, 1000, 700);
-        //get turkey image in all orientations
-        turkeyE = new ImageIcon(turkeyEFile).getImage();
-        turkeyImage = turkeyW;
-        turkeyW = new ImageIcon(turkeyWFile).getImage();
-        turkeyEinv = new ImageIcon(turkeyEinvFile).getImage();
-        turkeyWinv = new ImageIcon(turkeyWinvFile).getImage();
+        //get turkey image in all orientations and both scales
+        turkeyE = turkeyEReg = new ImageIcon(turkeyEFile).getImage();
+        turkeyW = turkeyWReg = new ImageIcon(turkeyWFile).getImage();
+        turkeyEInv = turkeyEInvReg = new ImageIcon(turkeyEinvFile).getImage();
+        turkeyWInv = turkeyWInvReg = new ImageIcon(turkeyWinvFile).getImage();
+        turkeyEBig = new ImageIcon(turkeyEBigFile).getImage();
+        turkeyWBig = new ImageIcon(turkeyWBigFile).getImage();
+        turkeyEInvBig = new ImageIcon(turkeyEInvBigFile).getImage();
+        turkeyWInvBig = new ImageIcon(turkeyWInvBigFile).getImage();
         //get cooked turkey image
         cookedTky = new ImageIcon(cookedTkyFile).getImage();
-        turkeyWidth = turkeyW.getWidth(null);
-        turkeyHeight = turkeyW.getHeight(null);
         putInStartPos();
-        east = true;
-        west = false;
-        
+
         turkeyFPS = dim.adjWDouble(2);    
         
         visible = true;
-        
+
         goingFast = false;
         invincible = false;
     }
@@ -73,9 +79,15 @@ public class Turkey {
     public void putInStartPos() {
         x = dim.adjW(5);
         y = dim.adjH(30);
-        east = true;
+        facingEast = true;
+        setHasFood(false);
+        isDead = false;
     }
     public void move(int winWidth, int winHeight) {
+
+        //can't move when dead
+        if (isDead())
+            return;
         
         //see if turkey is done going fast
         if (speedTimerTask != null) {
@@ -111,11 +123,11 @@ public class Turkey {
         if (y <= 25) {
             y = 26;
         }
-        if (x >= winWidth - turkeyWidth - 5) {
-            x = (winWidth - 1) - turkeyWidth - 5;
+        if (x >= winWidth - getWidth() - 5) {
+            x = (winWidth - 1) - getWidth() - 5;
         }
-        if (y >= (winHeight) - turkeyHeight/2) {
-            y = (winHeight) - turkeyHeight/2;
+        if (y >= (winHeight) - getHeight()/2) {
+            y = (winHeight) - getHeight()/2;
         }
 
         if (goingFast) {
@@ -134,37 +146,43 @@ public class Turkey {
     public double getY() {
         return y;
     }
-    
-    public Image getImage() {
-        
-        if (east) {
-            if (invincible) {
-                turkeyImage = turkeyEinv;
-            } else { 
-                turkeyImage = turkeyE;
-            }
-        } else if (west) {
-            if (invincible) {
-                turkeyImage = turkeyWinv;
-            } else {
-                turkeyImage = turkeyW;
-            }
-        }
-        return turkeyImage;
+
+    public double getWidth() {
+        return getImage().getWidth(null);
+    }
+
+    public double getHeight() {
+        return getImage().getHeight(null);
     }
     
-    public Image getCookedImage() {
-        return cookedTky;
+    public Image getImage() {
+
+        if (isDead)
+            return cookedTky;
+
+        if (facingEast) {
+            if (invincible) {
+                return turkeyEInv;
+            } else { 
+                return turkeyE;
+            }
+        } else {
+            if (invincible) {
+                return turkeyWInv;
+            } else {
+                return turkeyW;
+            }
+        }
     }
     
     public Rectangle makeRectangle() {
-        Rectangle rect;
-        if (east) {
-            rect = new Rectangle((int) Math.round(x + .25 * turkeyWidth), (int) Math.round(y + .35 * turkeyHeight), (int) Math.round(.7 * turkeyWidth), (int) Math.round(.45 * turkeyHeight));
+        if (facingEast) {
+            return new Rectangle((int) Math.round(x + .25 * getWidth()), (int) Math.round(y + .35 * getHeight()),
+                    (int) Math.round(.7 * getWidth()), (int) Math.round(.45 * getHeight()));
         } else {
-            rect = new Rectangle((int) Math.round(x + .05 * turkeyWidth), (int) Math.round(y + .35 * turkeyHeight), (int) Math.round(.7 * turkeyWidth), (int) Math.round(.45 * turkeyHeight));
+            return new Rectangle((int) Math.round(x + .05 * getWidth()), (int) Math.round(y + .35 * getHeight()),
+                    (int) Math.round(.7 * getWidth()), (int) Math.round(.45 * getHeight()));
         }
-        return rect;
     }
     
     public void setVisible(boolean vState) {
@@ -188,11 +206,39 @@ public class Turkey {
             invincibilityTimer.schedule(invincibilityTimerTask, 5000);
         }
     }
-    
+
     public boolean isInvincible() {
         return invincible;
     }
-    
+
+    public void setHasFood(boolean state) {
+        hasFood = state;
+        if (state) {
+            turkeyE = turkeyEBig;
+            turkeyW = turkeyWBig;
+            turkeyEInv = turkeyEInvBig;
+            turkeyWInv = turkeyWInvBig;
+        } else {
+            turkeyE = turkeyEReg;
+            turkeyW = turkeyWReg;
+            turkeyEInv = turkeyEInvReg;
+            turkeyWInv = turkeyWInvReg;
+        }
+    }
+
+    public boolean hasFood() {
+        return hasFood;
+    }
+
+    public void die() {
+        isDead = true;
+        setHasFood(false);
+    }
+
+    public boolean isDead() {
+        return isDead;
+    }
+
     public boolean isVisible() {
         return visible;
     }
@@ -247,14 +293,12 @@ public class Turkey {
         if ((key == KeyEvent.VK_RIGHT) || (kChar == 'd')) {
             xChange = turkeyFPS;
             rightButton = true;
-            east = true;
-            west = false;
+            facingEast = true;
         }
         if ((key == KeyEvent.VK_LEFT) || (kChar == 'a')) {
             xChange = -turkeyFPS;
             leftButton = true;
-            west = true;
-            east = false;
+            facingEast = false;
         }
         if ((key == KeyEvent.VK_DOWN) || (kChar == 's')) {
             yChange = turkeyFPS;
@@ -291,8 +335,7 @@ public class Turkey {
         if ((key == KeyEvent.VK_LEFT) || (kChar == 'a')) {
             if (rightButton) {
                 xChange = turkeyFPS;
-                east = true;
-                west = false;
+                facingEast = true;
             } else {
                 xChange = 0;
             }
@@ -302,8 +345,7 @@ public class Turkey {
         if ((key == KeyEvent.VK_RIGHT) || (kChar == 'd')) {
             if (leftButton) {
                 xChange = -turkeyFPS;
-                west = true;
-                east = false;
+                facingEast = false;
             } else {
                 xChange = 0;
             }

@@ -8,7 +8,7 @@ public class CosmoTurkeyv2_4_2 extends JFrame {
     public CosmoTurkeyv2_4_2() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
-        setTitle("Cosmo Turkey v2.4.2");
+        setTitle("CosMoby");
         dimensioner = new Dimensioner();
         setSize(dimensioner.width(), dimensioner.height());
         add(new Board(dimensioner.width(), dimensioner.height()));

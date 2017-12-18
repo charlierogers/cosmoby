@@ -14,8 +14,8 @@ public class Bush {
     private Image image;
     private Image bushImage;
     private Image explosion;
-    private String bushFile = "images/bush2.GIF";
-    private String explosionFile = "images/explosion.GIF";
+    private String bushFile = "images/coral.png";
+    private String explosionFile = "images/explosion.png";
     private boolean visible;
     private Timer explosionTimer;
     private Timer unExplosionTimer;

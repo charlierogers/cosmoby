@@ -67,7 +67,7 @@ public class Harpoon {
     public void putAtTop() {
         direction = getRandomDirection();
         x = getRandomX();
-        y = dim.adjH(25);
+        y = dim.adjH(25) - getImage().getHeight(null);
     }
     
     public void firstPosition() {

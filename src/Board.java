@@ -26,7 +26,6 @@ public class Board extends JPanel implements ActionListener {
     private Rectangle turkeyRect;
     private Rectangle foodTroughRect;
     private int statusBarHeight;
-    private Image tkyImage;
     private Image farmer;
     private Image youWon;
     private Image foodTrough;
@@ -48,8 +47,6 @@ public class Board extends JPanel implements ActionListener {
     private boolean isHit;
     private boolean hitLastTime;
     private boolean underBush;
-    private boolean deadTky;
-    private boolean hasFood;
     private int babiesFed;
     private ArrayList coinsArray;
     private ArrayList speedCoinsArray;
@@ -104,7 +101,6 @@ public class Board extends JPanel implements ActionListener {
         paused = false;
         turkey = new Turkey(screenWidth, screenHeight);
         
-        tkyImage = turkey.getImage();
         lives = 5;
         numOfCoins = 21 - level;
         if (numOfCoins < 0) {
@@ -115,9 +111,9 @@ public class Board extends JPanel implements ActionListener {
         hitCycle = 0;
         babiesFed = 0;
         
-        coinImage = "images/coin.GIF";
-        speedCoinImage = "images/rocket.GIF";
-        invincibilityCoinImage = "images/shield.GIF";
+        coinImage = "images/goldfish.png";
+        speedCoinImage = "images/torpedo.png";
+        invincibilityCoinImage = "images/shield.png";
         
         setFocusable(true);
         setDoubleBuffered(true);
@@ -280,7 +276,7 @@ public class Board extends JPanel implements ActionListener {
     private void setUpImages() {
         farmer = new ImageIcon("images/farmercombo.JPG").getImage();
         youWon = new ImageIcon("images/youwon4.GIF").getImage();
-        foodTrough = new ImageIcon("images/foodtrough.GIF").getImage();
+        foodTrough = new ImageIcon("images/rice.png").getImage();
     }
     
     @Override
@@ -301,11 +297,11 @@ public class Board extends JPanel implements ActionListener {
             scoreString = "Score: " + (accumulatedScore);
         }
         g.drawString(scoreString, dim.adjW(310), dim.adjH(18));
-        coinsString = "Coins: " + coins;
+        coinsString = "Fish: " + coins;
         g.drawString(coinsString, dim.adjW(440), dim.adjH(18));
         levelString = "Level: " + Integer.toString(level);
         g.drawString(levelString, dim.adjW(550), dim.adjH(18));
-        if (hasFood) {
+        if (turkey.hasFood()) {
             String foodString = "FOOD";
             g.drawString(foodString, dim.adjW(670), dim.adjH(18));
         }
@@ -323,7 +319,7 @@ public class Board extends JPanel implements ActionListener {
             }
 
             //draw turkey
-            g.drawImage(tkyImage, (int) turkey.getX(), (int) turkey.getY(), this); 
+            g.drawImage(turkey.getImage(), (int) turkey.getX(), (int) turkey.getY(), this);
             
             //draw bushes
             for (int i = 0; i < bushes.size(); i++) {
@@ -440,17 +436,11 @@ public class Board extends JPanel implements ActionListener {
 
             checkIntersections();
             
-            if (!deadTky) {
-                turkey.move(getWidth(), getHeight() - statusBarHeight);
-            }
+            turkey.move(getWidth(), getHeight() - statusBarHeight);
+
             for (int i = 0; i < shot.size(); i++) {
                 Harpoon bc = (Harpoon) shot.get(i);
                 bc.move();
-            }
-
-            //handle directional if not dead
-            if (!deadTky) {
-                tkyImage = turkey.getImage();
             }
 
             repaint();
@@ -485,17 +475,17 @@ public class Board extends JPanel implements ActionListener {
         }
 
         //see if tky is in food trough
-        if ((turkeyRect.intersects(foodTroughRect)) && !hasFood) {
-            hasFood = true;
+        if ((turkeyRect.intersects(foodTroughRect)) && !turkey.hasFood()) {
+            turkey.setHasFood(true);
         }
 
         //see if tky is trying to feed babies
         for (int i = 0; i < babies.size(); i++) {
             BabyTky baby = (BabyTky) babies.get(i);
-            if (turkeyRect.intersects(baby.makeRectangle()) && hasFood) {
+            if (turkeyRect.intersects(baby.makeRectangle()) && turkey.hasFood()) {
                 babiesFed++;
                 lives++;
-                hasFood = false;
+                turkey.setHasFood(false);
                 baby.setVisible(false);
             }
             if (!baby.isVisible()) {
@@ -510,7 +500,7 @@ public class Board extends JPanel implements ActionListener {
             if (turkeyRect.intersects(bush.makeRectangle())) {
                 underBush = true;
                 if (bush.isExploding() && !turkey.isInvincible()) {
-                    deadTky = true;
+                    turkey.die();
                 }
                 break Loop;
             } else {
@@ -519,7 +509,7 @@ public class Board extends JPanel implements ActionListener {
         }
 
         //subtract from lives if tky is hit
-        if (!underBush && !deadTky && !turkey.isInvincible()) {
+        if (!underBush && !turkey.isDead() && !turkey.isInvincible()) {
             Loop:
             for (int i = 0; i < shot.size(); i++) {
                 Harpoon bc = (Harpoon) shot.get(i);
@@ -534,7 +524,7 @@ public class Board extends JPanel implements ActionListener {
         }
         if (isHit && !hitLastTime) {
             isHit = false;
-            deadTky = true;
+            turkey.die();
         }
         
         //see if turkey is collecting a coin
@@ -564,16 +554,12 @@ public class Board extends JPanel implements ActionListener {
             }
         }
 
-        //handle dead tky image
-        if (deadTky) {
-            tkyImage = turkey.getCookedImage();
+        //handle dead tky
+        if (turkey.isDead()) {
             hitCycle++;
             if (hitCycle > 50) {
-                deadTky = false;
                 lives--;
-                hasFood = false;
                 hitCycle = 0;
-                tkyImage = turkey.getImage();
                 turkey.putInStartPos();
             }
         }
