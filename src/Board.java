@@ -142,23 +142,23 @@ public class Board extends JPanel implements ActionListener {
         
         //only displayed if you have a high score
         saveScore = new JGradientButton("Save Score");
-        saveScore.setBounds(dim.adjW(685), dim.adjH(470), dim.adjW(100), dim.adjH(30));
+        saveScore.setBounds(screenWidth / 2 + dim.adjW(285), dim.adjH(500), dim.adjW(100), dim.adjH(30));
         saveScore.addActionListener(buttonActions);
         saveScore.setGradientColors(Color.white, BOARD_COLOR);
         removedSaveScore = false;
         
         //only displayed if you have a high score
         nameField = new JTextField();
-        nameField.setBounds(dim.adjW(490), dim.adjH(470), dim.adjW(175), dim.adjH(30));
+        nameField.setBounds(screenWidth / 2 + dim.adjW(70), dim.adjH(500), dim.adjW(175), dim.adjH(30));
         nameField.addKeyListener(buttonActions);
         
         continueButton = new JGradientButton("Continue");
-        continueButton.setBounds(dim.adjW(350), dim.adjH(600), dim.adjW(110), dim.adjH(30));
+        continueButton.setBounds(screenWidth / 2, dim.adjH(575), dim.adjW(110), dim.adjH(30));
         continueButton.addActionListener(buttonActions);
         continueButton.setGradientColors(Color.white, BOARD_COLOR);
         
         goToLevel1 = new JGradientButton("Go Back To Level 1");
-        goToLevel1.setBounds(dim.adjW(500), dim.adjH(600), dim.adjW(200), dim.adjH(30));
+        goToLevel1.setBounds((int) (screenWidth * 0.7), dim.adjH(575), dim.adjW(200), dim.adjH(30));
         goToLevel1.addActionListener(buttonActions);
         goToLevel1.setGradientColors(Color.white, BOARD_COLOR);
         
@@ -376,20 +376,20 @@ public class Board extends JPanel implements ActionListener {
             String levelScore = "Score for This Level: " + score;
             totalScore = "Total Score: " + accumulatedScore;
             if (wonGame) {
-                g.drawImage(youWon, (screenWidth - youWon.getWidth(null)) / 2, dim.adjH(50), this);
+                g.drawImage(youWon, dim.adjW(50), dim.adjH(100), this);
                 
             } else {
-                g.drawImage(farmer, (screenWidth - farmer.getWidth(null)) / 2, dim.adjH(50), this);
+                g.drawImage(farmer, dim.adjW(50), dim.adjH(200), this);
                 g.setFont(new Font("Arial", Font.BOLD, 48));
             }
             g.setFont(new Font("Arial", Font.BOLD, 48));
-                g.drawString(levelScore, dim.adjW(400), dim.adjH(350));
-                g.drawString(totalScore, dim.adjW(400), dim.adjH(425));
-                g.drawString(new String("High Scores"), dim.adjW(50), dim.adjH(400));
-                int nameX = dim.adjW(50);
-                int nameY = dim.adjH(440);
-                int scoreX = dim.adjW(250);
-                int scoreY = dim.adjH(440);
+                g.drawString(levelScore, screenWidth / 2, dim.adjH(380));
+                g.drawString(totalScore, screenWidth / 2, dim.adjH(455));
+                g.drawString(new String("High Scores"), screenWidth / 2, dim.adjH(100));
+                int nameX = screenWidth / 2;
+                int nameY = dim.adjH(140);
+                int scoreX = screenWidth / 2 + dim.adjW(200);
+                int scoreY = dim.adjH(140);
                 for (int i = 0; i < 5; i++) {
                     g.setFont(new Font("Arial", Font.BOLD, 24));
                     g.drawString((String) highScoresNames.get(i), nameX, nameY);
@@ -399,7 +399,7 @@ public class Board extends JPanel implements ActionListener {
                 }
                 if (isHighScore() && !removedSaveScore) {
                     g.setFont(new Font("Arial", Font.BOLD, 28));
-                    g.drawString(new String("Name: "), dim.adjW(400), dim.adjH(490));
+                    g.drawString(new String("Name: "), screenWidth / 2, dim.adjH(520));
                     add(saveScore);
                     add(nameField);
                 }
