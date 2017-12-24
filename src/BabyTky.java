@@ -10,7 +10,7 @@ public class BabyTky {
     private int x;
     private int y;
     private Image babyTky;
-    private String tkyImageFile = "images/turkey2.GIF";
+    private String tkyImageFile = "images/Noseless_Mober.png";
     
     public BabyTky (int x, int y) {
         this.x = x;

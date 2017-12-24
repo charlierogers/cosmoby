@@ -15,7 +15,7 @@ public class Board extends JPanel implements ActionListener {
     private boolean playing;
     private boolean paused;
     private boolean wonGame;
-    private Color boardColor;
+    private static final Color BOARD_COLOR = new Color(125, 203, 238);
     private Timer timer;
     private Turkey turkey;
     private ArrayList shot;
@@ -68,13 +68,13 @@ public class Board extends JPanel implements ActionListener {
     Dim dim;
     int[][] babyTkyPos = {{5, 100}, {5, 150}, {5, 200}, {5, 250}, {5, 300}};
     private double[] random = new double[10];
+    private static final Color UI_BTN_COLOR = Color.blue;
     
     String totalScore;
 
     public Board(int width, int height) {
         screenWidth = width;
         screenHeight = height;
-        boardColor = new Color(125, 203, 238);
         setSize(width, height);
         dim = new Dim(screenWidth, screenHeight, 1000, 700);
         reset();
@@ -83,7 +83,7 @@ public class Board extends JPanel implements ActionListener {
     private void reset() {
         
         //set up board
-        setBackground(boardColor);
+        setBackground(BOARD_COLOR);
         
         //set up ArrayList() for temp storage of high scores and names
         highScores = new ArrayList();
@@ -144,7 +144,7 @@ public class Board extends JPanel implements ActionListener {
         saveScore = new JGradientButton("Save Score");
         saveScore.setBounds(dim.adjW(685), dim.adjH(470), dim.adjW(100), dim.adjH(30));
         saveScore.addActionListener(buttonActions);
-        saveScore.setGradientColors(Color.white, Color.green);
+        saveScore.setGradientColors(Color.white, BOARD_COLOR);
         removedSaveScore = false;
         
         //only displayed if you have a high score
@@ -155,12 +155,12 @@ public class Board extends JPanel implements ActionListener {
         continueButton = new JGradientButton("Continue");
         continueButton.setBounds(dim.adjW(350), dim.adjH(600), dim.adjW(110), dim.adjH(30));
         continueButton.addActionListener(buttonActions);
-        continueButton.setGradientColors(Color.white, Color.green);
+        continueButton.setGradientColors(Color.white, BOARD_COLOR);
         
         goToLevel1 = new JGradientButton("Go Back To Level 1");
         goToLevel1.setBounds(dim.adjW(500), dim.adjH(600), dim.adjW(200), dim.adjH(30));
         goToLevel1.addActionListener(buttonActions);
-        goToLevel1.setGradientColors(Color.white, Color.green);
+        goToLevel1.setGradientColors(Color.white, BOARD_COLOR);
         
         statusBar = new Rectangle(0, 0, getWidth(), dim.adjH(25));
         statusBarHeight = (int) statusBar.getHeight();
@@ -274,8 +274,8 @@ public class Board extends JPanel implements ActionListener {
     }
     
     private void setUpImages() {
-        farmer = new ImageIcon("images/farmercombo.JPG").getImage();
-        youWon = new ImageIcon("images/youwon4.GIF").getImage();
+        farmer = new ImageIcon("images/SadMobers.png").getImage();
+        youWon = new ImageIcon("images/HappyMobers.png").getImage();
         foodTrough = new ImageIcon("images/rice.png").getImage();
     }
     
@@ -305,8 +305,8 @@ public class Board extends JPanel implements ActionListener {
             String foodString = "FOOD";
             g.drawString(foodString, dim.adjW(670), dim.adjH(18));
         }
-        
-        
+
+
         if (playing) {
             
             //draw food trough
@@ -376,10 +376,10 @@ public class Board extends JPanel implements ActionListener {
             String levelScore = "Score for This Level: " + score;
             totalScore = "Total Score: " + accumulatedScore;
             if (wonGame) {
-                g.drawImage(youWon, dim.adjW(275), dim.adjH(50), this);
+                g.drawImage(youWon, (screenWidth - youWon.getWidth(null)) / 2, dim.adjH(50), this);
                 
             } else {
-                g.drawImage(farmer, dim.adjW(200), dim.adjH(100), this);
+                g.drawImage(farmer, (screenWidth - farmer.getWidth(null)) / 2, dim.adjH(50), this);
                 g.setFont(new Font("Arial", Font.BOLD, 48));
             }
             g.setFont(new Font("Arial", Font.BOLD, 48));
